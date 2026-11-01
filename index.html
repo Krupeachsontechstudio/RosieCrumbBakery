@@ -1,0 +1,1004 @@
+<title>Rosie Crumb Bakery</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Nunito:wght@500;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: one illustrated shop scene. Glass display case on the pink wall, marble counter below
+   with register (left), pastry box (center) and topping pitchers (right). Stacks on phones with a pinned total bar.
+   This page commits to one pastel look on purpose, so there are no dark-theme blocks. */
+:root {
+  --blush: #F8C8D4;
+  --rose: #E8A0B4;
+  --rose-deep: #D9748F;
+  --burgundy: #7A1F3D;
+  --cream: #FFF4E6;
+  --gold: #C9A24B;
+  --ink: #4A1327;
+  --wall: #F6BCCB;
+  --marble: #FBE3EA;
+  --font-display: "Caprasimo", "Georgia", serif;
+  --font-body: "Nunito", system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--wall);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 12px 28px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(900px 500px at 85% -10%, rgba(255,255,255,.55), transparent 60%),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.0) 0 46px, rgba(122,31,61,.05) 46px 48px);
+}
+button { font-family: inherit; color: inherit; }
+button:focus-visible { outline: 3px solid var(--burgundy); outline-offset: 3px; }
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* masthead */
+.masthead { max-width: 1040px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 6px 12px; }
+.logo { display: flex; flex-direction: column; line-height: 1; }
+.logo-name { font-family: var(--font-display); font-size: clamp(26px, 5vw, 38px); color: var(--burgundy); letter-spacing: .01em; text-shadow: 0 2px 0 rgba(255,255,255,.6); }
+.logo-sub { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; font-weight: 800; color: var(--rose-deep); margin-top: 6px; }
+.pill { border: 2px solid var(--burgundy); background: var(--cream); color: var(--burgundy); border-radius: 999px; padding: 8px 14px; font-weight: 800; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.pill:hover { background: #fff; }
+.pill svg { width: 16px; height: 16px; }
+
+/* wall + case */
+.scene { max-width: 1040px; margin: 0 auto; }
+.wall {
+  position: relative;
+  border-radius: 28px 28px 0 0;
+  padding: 56px clamp(12px, 4vw, 40px) 0;
+  background:
+    radial-gradient(500px 260px at 20% 8%, rgba(255,255,255,.7), transparent 70%),
+    repeating-linear-gradient(90deg, var(--blush) 0 38px, #f3b6c6 38px 40px);
+  border: 3px solid rgba(122,31,61,.18);
+  border-bottom: 0;
+  overflow: hidden;
+}
+.boxchip { position: absolute; top: 14px; right: 16px; background: var(--cream); color: var(--burgundy); border: 2px solid var(--burgundy); border-radius: 999px; padding: 6px 14px; font-weight: 800; font-size: 13px; box-shadow: 0 3px 0 rgba(122,31,61,.25); }
+.boxchip b { font-variant-numeric: tabular-nums; }
+.sign { position: absolute; top: 16px; left: 18px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--burgundy); opacity: .75; }
+.case {
+  position: relative; width: min(100%, 880px); margin: 0 auto;
+  border: 6px solid var(--burgundy);
+  border-bottom: 0;
+  border-radius: 150px 150px 10px 10px / 78px 78px 10px 10px;
+  background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.22) 40%, rgba(255,230,238,.35));
+  box-shadow: inset 0 0 40px rgba(255,255,255,.7), 0 18px 28px rgba(122,31,61,.18);
+  padding: 46px clamp(8px, 3vw, 28px) 0;
+}
+.case::before { content: ""; position: absolute; inset: 8px 14px auto 14px; height: 40%; border-radius: 120px 120px 40px 40px; background: linear-gradient(120deg, rgba(255,255,255,.55), rgba(255,255,255,0) 45%); pointer-events: none; }
+.shelf { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(4px, 2vw, 24px); position: relative; padding-bottom: 14px; }
+.shelf::after { content: ""; position: absolute; left: -4%; right: -4%; bottom: 0; height: 12px; border-radius: 6px; background: linear-gradient(#9b3558, var(--burgundy)); box-shadow: 0 5px 8px rgba(74,19,39,.3); }
+.shelf + .shelf { margin-top: 6px; }
+
+.pastry { position: relative; background: none; border: 0; padding: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+.stage { position: relative; width: 100%; aspect-ratio: 1 / .8; }
+.plate { position: absolute; left: 8%; right: 8%; bottom: 4%; height: 36%; border-radius: 50%; background: radial-gradient(ellipse at 50% 35%, #fffaf0 0 55%, #f1e1c8 100%); box-shadow: 0 6px 8px rgba(74,19,39,.25), inset 0 -3px 4px rgba(122,31,61,.12); }
+.plate::after { content: ""; position: absolute; inset: 22% 18%; border-radius: 50%; box-shadow: inset 0 2px 4px rgba(122,31,61,.14); }
+.art { display: block; }
+.stage .art { position: absolute; left: 16%; bottom: 14%; width: 68%; height: auto; transition: transform .25s cubic-bezier(.3,1.5,.5,1), filter .25s; filter: drop-shadow(0 4px 3px rgba(74,19,39,.25)); }
+.stage img.art { height: auto; }
+.pastry:hover .art, .pastry:focus-visible .art { transform: translateY(-9%) scale(1.07); filter: drop-shadow(0 8px 6px rgba(74,19,39,.3)) drop-shadow(0 0 12px rgba(255,236,170,.95)); }
+.tag { position: relative; margin-top: -2px; background: var(--cream); border: 1.5px solid rgba(122,31,61,.55); border-radius: 4px; padding: 2px 8px 3px; text-align: center; line-height: 1.1; transition: transform .2s; box-shadow: 0 2px 0 rgba(122,31,61,.2); max-width: 100%; }
+.tag b { display: block; font-size: clamp(9px, 1.7vw, 12px); font-weight: 800; }
+.tag span { font-family: var(--font-mono); font-size: clamp(9px, 1.6vw, 12px); color: var(--burgundy); font-variant-numeric: tabular-nums; }
+.pastry:hover .tag, .pastry:focus-visible .tag { transform: scale(1.14); }
+.pastry:active .art { transform: scale(.96); }
+
+/* case picture with hotspots */
+.casepic { position: relative; border-radius: 28px 28px 0 0; overflow: hidden; border: 3px solid rgba(122,31,61,.18); border-bottom: 0; background: var(--blush); }
+.frame { position: relative; aspect-ratio: 1448 / 1086; }
+.frame > img { display: block; width: 100%; height: 100%; object-fit: cover; user-select: none; }
+.hot { position: absolute; background: none; border: 0; padding: 0; cursor: pointer; border-radius: 18px; }
+.hot .anchor { position: absolute; pointer-events: none; }
+.hot .glow { position: absolute; inset: -6%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,243,190,.7), rgba(255,243,190,0) 78%); opacity: 0; transform: scale(.92); transition: opacity .25s, transform .3s cubic-bezier(.3,1.5,.5,1); }
+.hot:hover .glow, .hot:focus-visible .glow { opacity: 1; transform: scale(1.06); }
+.hot:focus-visible { outline: 3px solid var(--burgundy); outline-offset: -3px; }
+.hot .addpill { position: absolute; left: 50%; top: -2%; transform: translate(-50%, 6px); background: var(--burgundy); color: var(--cream); font-weight: 800; font-size: clamp(10px, 1.7vw, 13px); padding: 3px 10px; border-radius: 99px; white-space: nowrap; opacity: 0; transition: opacity .2s, transform .2s; box-shadow: 0 3px 0 #4d1126; }
+.hot:hover .addpill, .hot:focus-visible .addpill { opacity: 1; transform: translate(-50%, 0); }
+.hot:active .glow { transform: scale(.98); }
+.hot .badge { position: absolute; right: 0; top: 0; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 99px; background: var(--burgundy); color: var(--cream); font-size: 12px; font-weight: 800; display: grid; place-items: center; border: 2px solid var(--cream); font-variant-numeric: tabular-nums; }
+.hot .badge[hidden] { display: none; }
+.bitem .art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.flyer .art { object-fit: contain; }
+
+/* counter */
+.counter {
+  position: relative;
+  border-radius: 0 0 28px 28px;
+  padding: 28px clamp(12px, 3vw, 32px) 34px;
+  background:
+    radial-gradient(260px 90px at 30% 20%, rgba(232,160,180,.35), transparent 70%),
+    radial-gradient(340px 70px at 78% 70%, rgba(232,160,180,.28), transparent 70%),
+    linear-gradient(180deg, #fde9ee, var(--marble));
+  border: 3px solid rgba(122,31,61,.18);
+  border-top: 8px solid var(--burgundy);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: clamp(12px, 3vw, 32px);
+  align-items: end;
+}
+
+/* register */
+.register { width: 100%; max-width: 270px; justify-self: center; position: relative; }
+.reg-sign { font-family: var(--font-mono); font-weight: 500; font-size: clamp(18px, 3vw, 24px); background: var(--burgundy); color: var(--cream); border-radius: 8px; padding: 6px 14px; width: max-content; margin: 0 auto -6px; position: relative; z-index: 2; font-variant-numeric: tabular-nums; box-shadow: 0 4px 0 #531229, 0 0 0 3px var(--gold) inset; letter-spacing: .04em; }
+.reg-body { background: linear-gradient(#f6b9ca, #e18aa6); border-radius: 18px 18px 10px 10px; padding: 18px 12px 10px; box-shadow: 0 10px 14px rgba(74,19,39,.25), inset 0 2px 0 rgba(255,255,255,.6); border: 2px solid #c8627f; }
+.reg-screen { height: 26px; border-radius: 6px; background: #fff4e6; border: 2px solid var(--gold); margin-bottom: 8px; font-family: var(--font-mono); font-size: 11px; display: flex; align-items: center; justify-content: flex-end; padding: 0 8px; color: var(--burgundy); }
+.reg-keys { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+.reg-keys i { aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff, var(--cream) 55%, #e7cfae); box-shadow: 0 2px 0 #b98a58; }
+.reg-keys i.press { transform: translateY(2px); box-shadow: 0 0 0 #b98a58; }
+.reg-drawer { margin-top: 10px; height: 22px; border-radius: 6px; background: linear-gradient(#d9748f, #c25778); display: flex; align-items: center; justify-content: center; }
+.reg-drawer::after { content: ""; width: 38px; height: 8px; border-radius: 4px; background: var(--gold); box-shadow: inset 0 1px 0 rgba(255,255,255,.5); }
+.reg-label { text-align: center; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 800; color: var(--rose-deep); margin-top: 10px; }
+
+/* box */
+.boxwrap { display: flex; flex-direction: column; align-items: center; gap: 12px; min-width: 0; }
+.box { position: relative; width: 100%; max-width: 440px; border-radius: 14px; padding: 12px; background: repeating-linear-gradient(135deg, #fffaf1 0 14px, #fdeede 14px 28px); border: 3px solid #e3c9a4; box-shadow: 0 14px 18px rgba(74,19,39,.22), inset 0 0 0 5px #fff8ec, inset 0 0 16px rgba(201,162,75,.2); display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.box::after { content: "Rosie Crumb \00b7 Bakery"; position: absolute; left: 0; right: 0; bottom: 4px; text-align: center; font-family: var(--font-display); font-size: 10px; letter-spacing: .12em; color: rgba(122,31,61,.35); pointer-events: none; }
+.slot { position: relative; aspect-ratio: 1; border-radius: 12px; border: 2px dashed rgba(217,116,143,.4); display: grid; place-items: center; }
+.bitem { position: absolute; inset: 0; background: none; border: 0; padding: 0; cursor: pointer; transition: transform .2s; }
+.bitem .art { position: relative; width: 100%; height: auto; filter: drop-shadow(0 3px 2px rgba(74,19,39,.3)); }
+.bitem:hover { transform: scale(1.06) rotate(var(--rot)) !important; }
+.bitem:hover::after { content: "Remove"; position: absolute; left: 50%; top: 4px; transform: translateX(-50%); background: var(--burgundy); color: var(--cream); font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 99px; z-index: 3; }
+.bitem.pending { visibility: hidden; }
+.bitem.land { animation: land .42s cubic-bezier(.3,1.6,.5,1); }
+@keyframes land { 0% { transform: scale(1.18) rotate(var(--rot)); } 55% { transform: scale(.94) rotate(var(--rot)); } 100% { transform: scale(1) rotate(var(--rot)); } }
+.sauceclip { position: absolute; left: 0; width: 100%; top: 50%; transform: translateY(-50%); pointer-events: none; overflow: hidden; -webkit-mask-image: var(--img); mask-image: var(--img); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+.sw { position: absolute; inset: 0; will-change: transform; }
+.sauceclip.fresh .sw { animation: flow 1.3s cubic-bezier(.2,.75,.3,1) both; }
+@keyframes flow { from { transform: translateY(-104%); } to { transform: translateY(0); } }
+.sw i { position: absolute; inset: 0; display: block; -webkit-mask-image: var(--edge); mask-image: var(--edge); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+.sw .su { background: rgba(35,10,6,.42); transform: translateY(4%); filter: blur(.8px); }
+.sf::before, .sf::after { content: ""; position: absolute; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(255,255,255,var(--gl,.9)), rgba(255,255,255,0) 72%); }
+.sf::after { left: 9%; top: 11%; width: 48%; height: 11%; transform: rotate(-5deg); }
+.sf::before { left: 64%; top: 20%; width: 22%; height: 7%; transform: rotate(8deg); opacity: .8; }
+.sf.t-cream { --gl: .85; background: linear-gradient(180deg, #fffdf8 0%, #fbf1de 45%, #ecd9b6 85%, #dfc79c 100%); }
+.sf.t-choc { --gl: .8; background:
+  radial-gradient(circle at 12% 30%, #d9a15f 0 1.4px, transparent 2px), radial-gradient(circle at 30% 22%, #c98a4a 0 1.2px, transparent 1.8px),
+  radial-gradient(circle at 47% 34%, #e0b070 0 1.4px, transparent 2px), radial-gradient(circle at 63% 26%, #c98a4a 0 1.2px, transparent 1.8px),
+  radial-gradient(circle at 80% 32%, #d9a15f 0 1.4px, transparent 2px), radial-gradient(circle at 22% 40%, #d9a15f 0 1.2px, transparent 1.8px),
+  radial-gradient(circle at 70% 40%, #e0b070 0 1.2px, transparent 1.8px),
+  linear-gradient(180deg, #6a3722 0%, #3a190d 50%, #1f0c05 100%); }
+.sf.t-pist { --gl: .6; background:
+  radial-gradient(circle at 18% 28%, #6f8a3c 0 1.3px, transparent 1.9px), radial-gradient(circle at 40% 20%, #7c9846 0 1.1px, transparent 1.7px),
+  radial-gradient(circle at 58% 34%, #6f8a3c 0 1.3px, transparent 1.9px), radial-gradient(circle at 78% 24%, #7c9846 0 1.1px, transparent 1.7px),
+  linear-gradient(180deg, #eaf4c6 0%, #c9dc92 50%, #a3ba70 100%); }
+.sauce { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; transform-origin: 50% 20%; }
+.sauce.fresh { animation: sauceIn .9s cubic-bezier(.3,.7,.3,1); }
+@keyframes sauceIn { 0% { clip-path: inset(0 0 100% 0); transform: scale(.96, .6); } 60% { clip-path: inset(0 0 30% 0); } 100% { clip-path: inset(0 0 -20% 0); transform: scale(1); } }
+.drizzle { position: absolute; left: 18%; right: 18%; top: 22%; height: 30%; border-radius: 50% 50% 46% 46% / 62% 62% 38% 38%; background: radial-gradient(ellipse at 32% 26%, rgba(255,255,255,.6), transparent 42%), var(--tc); box-shadow: inset 0 -4px 6px rgba(0,0,0,.16), 0 2px 3px rgba(0,0,0,.22); pointer-events: none; transform-origin: 50% 0; }
+.drizzle::after { content: ""; position: absolute; left: 16%; top: 78%; width: 13%; height: 46%; border-radius: 0 0 99px 99px; background: var(--tc); box-shadow: 30px 4px 0 -1px var(--tc), 56px -4px 0 -2px var(--tc); }
+.drizzle.fresh { animation: pourin .7s ease-out; }
+@keyframes pourin { from { transform: scaleY(0); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
+.box.wiggle { animation: wiggle .5s; }
+@keyframes wiggle { 0%,100% { transform: rotate(0); } 20% { transform: rotate(-2.5deg) translateX(-5px); } 40% { transform: rotate(2.5deg) translateX(5px); } 60% { transform: rotate(-1.5deg); } 80% { transform: rotate(1.5deg); } }
+.boxmsg { position: absolute; left: 50%; top: -14px; transform: translate(-50%, -6px); background: var(--burgundy); color: var(--cream); font-weight: 800; font-size: 13px; padding: 6px 14px; border-radius: 99px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 5; white-space: nowrap; }
+.boxmsg.show { opacity: 1; transform: translate(-50%, 0); }
+.checkout { appearance: none; border: 0; background: var(--burgundy); color: var(--cream); font-weight: 800; font-size: 14px; letter-spacing: .04em; padding: 11px 26px; border-radius: 999px; cursor: pointer; box-shadow: 0 4px 0 #4d1126, 0 8px 14px rgba(74,19,39,.25); transition: transform .15s, box-shadow .15s; }
+.checkout:hover { transform: translateY(-1px); }
+.checkout:active { transform: translateY(3px); box-shadow: 0 1px 0 #4d1126; }
+.checkout:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.hint { margin: 0; font-size: 12px; color: rgba(74,19,39,.7); text-align: center; max-width: 36ch; }
+
+/* toppings */
+.toppings { --tg: clamp(4px, 1.4vw, 12px); display: flex; flex-wrap: wrap; justify-content: center; gap: 14px var(--tg); align-items: flex-end; }
+.pitcher { flex: 0 0 calc((100% - 2 * var(--tg)) / 3); background: none; border: 0; padding: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.pitcher .pitch-art { width: 100%; max-width: 92px; transition: transform .25s; transform-origin: 80% 90%; filter: drop-shadow(0 5px 4px rgba(74,19,39,.25)); }
+.pitcher:hover .pitch-art { transform: translateY(-4px) scale(1.05); }
+.pitcher.pour .pitch-art { animation: tilt .85s ease-in-out; }
+@keyframes tilt { 0%,100% { transform: rotate(0); } 35%,65% { transform: rotate(-38deg) translate(-10px, -4px); } }
+.pill-label { background: #fff; border: 1.5px solid var(--rose); border-radius: 999px; padding: 3px 8px; font-size: clamp(9px, 1.6vw, 11px); font-weight: 800; text-align: center; line-height: 1.15; color: var(--burgundy); box-shadow: 0 2px 0 rgba(217,116,143,.4); }
+.pill-label span { display: block; font-family: var(--font-mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+
+/* pastry cart */
+.cart { position: relative; width: 100%; max-width: 440px; padding-bottom: 54px; }
+.cart .box { max-width: none; }
+.cart-handle { position: absolute; left: -12px; bottom: 70px; width: 10px; height: 168px; border-radius: 6px; background: linear-gradient(90deg, #a53b5f, var(--burgundy)); transform: rotate(13deg); transform-origin: 50% 100%; z-index: 0; box-shadow: 0 6px 8px rgba(74,19,39,.25); }
+.cart-handle::before { content: ""; position: absolute; top: -9px; left: -14px; width: 38px; height: 14px; border-radius: 8px; background: var(--cream); border: 3px solid var(--burgundy); }
+.cart .box { z-index: 1; }
+.cart-legs { position: absolute; left: 0; right: 0; bottom: 0; height: 62px; z-index: 0; }
+.strut { position: absolute; top: 0; width: 8px; height: 40px; border-radius: 4px; background: linear-gradient(90deg, #a53b5f, var(--burgundy)); }
+.strut.l { left: 17%; } .strut.r { right: 17%; }
+.wheel { position: absolute; bottom: 0; width: 42px; height: 42px; border-radius: 50%; border: 5px solid var(--burgundy); background: conic-gradient(var(--cream) 0 7%, #f4b8c8 7% 25%, var(--cream) 25% 32%, #f4b8c8 32% 50%, var(--cream) 50% 57%, #f4b8c8 57% 75%, var(--cream) 75% 82%, #f4b8c8 82%); box-shadow: 0 4px 0 rgba(74,19,39,.22); }
+.wheel::after { content: ""; position: absolute; inset: 11px; border-radius: 50%; background: var(--gold); box-shadow: inset 0 1px 0 rgba(255,255,255,.6); }
+.wheel:nth-of-type(3) { left: calc(17% - 17px); } .wheel:nth-of-type(4) { right: calc(17% - 17px); }
+.cart-legs::after { content: ""; position: absolute; left: 6%; right: 6%; bottom: -8px; height: 10px; border-radius: 50%; background: radial-gradient(closest-side, rgba(74,19,39,.28), transparent); }
+.cart.roll { animation: rollin 1.25s cubic-bezier(.2,.8,.25,1) both; }
+.cart.roll .wheel { animation: spin 1.25s cubic-bezier(.2,.8,.25,1) both; }
+@keyframes rollin { from { transform: translateX(110vw); } to { transform: none; } }
+@keyframes spin { from { transform: rotate(-1260deg); } to { transform: none; } }
+.cart.bump { animation: bump .5s ease-out; }
+.cart.bump .wheel { animation: tick .5s ease-out; }
+@keyframes bump { 0% { transform: translateX(0); } 30% { transform: translateX(7px); } 65% { transform: translateX(-3px); } 100% { transform: none; } }
+@keyframes tick { to { transform: rotate(70deg); } }
+body.rolling .hot, body.rolling .pitcher { pointer-events: none; }
+
+/* start screen */
+body.locked { overflow: hidden; }
+.start { position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; padding: 96px max(16px, env(safe-area-inset-right, 0px)) 24px max(16px, env(safe-area-inset-left, 0px)); overflow-y: auto;
+  background: linear-gradient(rgba(248,200,212,.86), rgba(248,200,212,.93)), url("assets/case.jpg") center / cover; transition: opacity .55s, visibility .55s; }
+.start.out { opacity: 0; visibility: hidden; pointer-events: none; }
+.start[hidden] { display: none !important; }
+.awning { position: absolute; top: 0; left: 0; right: 0; height: 58px; background: repeating-linear-gradient(90deg, var(--rose) 0 44px, var(--cream) 44px 88px); box-shadow: 0 4px 10px rgba(74,19,39,.18); }
+.awning::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 22px; background: radial-gradient(circle at 22px 0, var(--rose) 21px, transparent 22.5px), radial-gradient(circle at 66px 0, var(--cream) 21px, transparent 22.5px); background-size: 88px 22px; background-repeat: repeat-x; filter: drop-shadow(0 3px 2px rgba(74,19,39,.15)); }
+.start-card { width: min(100%, 520px); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+.start-kicker { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; font-weight: 800; color: var(--rose-deep); }
+.start-title { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(46px, 13vw, 88px); line-height: .95; color: var(--burgundy); text-shadow: 0 3px 0 rgba(255,255,255,.7); text-wrap: balance; }
+.start-title span { display: block; font-family: var(--font-body); font-weight: 800; font-size: clamp(13px, 3.4vw, 18px); letter-spacing: .38em; text-transform: uppercase; color: var(--rose-deep); text-shadow: none; margin-top: 10px; }
+.start-sub { margin: 0; font-size: 16px; font-weight: 700; color: var(--ink); max-width: 34ch; }
+.mini .cart-handle { height: 112px; }
+.mini { margin: 44px auto 18px; max-width: 280px; padding-bottom: 54px; animation: idle 3.2s ease-in-out infinite; }
+.mini .box { display: flex; align-items: flex-end; justify-content: center; gap: 0; padding: 14px 10px 22px; }
+.mini .box img { width: 34%; height: auto; filter: drop-shadow(0 3px 2px rgba(74,19,39,.3)); }
+.mini .box img:nth-child(1) { transform: rotate(-5deg); } .mini .box img:nth-child(3) { transform: rotate(5deg); }
+.mini .wheel { animation: wob 3.2s ease-in-out infinite; }
+@keyframes idle { 0%, 100% { transform: translateX(-10px); } 50% { transform: translateX(10px); } }
+@keyframes wob { 0%, 100% { transform: rotate(-40deg); } 50% { transform: rotate(40deg); } }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; text-align: left; width: min(100%, 360px); counter-reset: s; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: center; font-weight: 700; font-size: 14px; }
+.steps li::before { content: counter(s); width: 28px; height: 28px; border-radius: 50%; background: var(--burgundy); color: var(--cream); display: grid; place-items: center; font-family: var(--font-mono); font-size: 13px; }
+.startbtn { margin-top: 12px; appearance: none; border: 0; cursor: pointer; background: var(--burgundy); color: var(--cream); font-family: var(--font-display); font-size: 22px; letter-spacing: .02em; padding: 14px 40px; border-radius: 999px; box-shadow: 0 6px 0 #4d1126, 0 14px 22px rgba(74,19,39,.3); transition: transform .15s, box-shadow .15s; }
+.startbtn:hover { transform: translateY(-2px); }
+.startbtn:active { transform: translateY(4px); box-shadow: 0 2px 0 #4d1126; }
+.start small { font-size: 12px; font-weight: 700; color: rgba(74,19,39,.65); }
+
+/* particle toppings (chocolate chips, sprinkles) */
+.bits { position: absolute; left: 0; width: 100%; top: 50%; transform: translateY(-50%); pointer-events: none; }
+.bits i { position: absolute; left: calc(var(--x) * 1%); top: calc(var(--y) * 1%); width: calc(var(--s) * 1%); translate: -50% -50%; rotate: var(--r); display: block; }
+.bits i.chips { aspect-ratio: 1 / .82; border-radius: 46% 54% 42% 58% / 56% 44% 56% 44%; background: radial-gradient(circle at 30% 26%, #a87650 0 13%, #5a2f1b 46%, #2a1209 100%); box-shadow: 0 1.5px 1.5px rgba(0,0,0,.45), inset 0 -1px 1px rgba(0,0,0,.35); }
+.bits i.sprinkle { aspect-ratio: 3.4 / 1; border-radius: 99px; background: linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,0) 55%), var(--c); box-shadow: 0 1px 1.2px rgba(0,0,0,.4); }
+.bits.fresh i { animation: bitdrop .62s cubic-bezier(.3,.1,.5,1) both; animation-delay: var(--dl); }
+@keyframes bitdrop { 0% { translate: -50% -420%; opacity: 0; } 12% { opacity: 1; } 68% { translate: -50% -50%; } 82% { translate: -50% -100%; } 100% { translate: -50% -50%; } }
+.pitcher.jar .pitch-art { transform-origin: 50% 88%; }
+.pitcher.jar.pour .pitch-art { animation: shaker .85s ease-in-out; }
+@keyframes shaker { 0%, 100% { transform: rotate(0); } 12% { transform: rotate(-28deg) translateY(-6px); } 28% { transform: rotate(16deg); } 44% { transform: rotate(-24deg); } 60% { transform: rotate(14deg); } 78% { transform: rotate(-8deg); } }
+
+/* flying clone */
+.flyer { position: fixed; z-index: 60; pointer-events: none; will-change: transform; transform-origin: 50% 50%; }
+.flyer .art { position: static; width: 100%; height: 100%; filter: drop-shadow(0 8px 6px rgba(74,19,39,.3)); }
+
+/* toast, modal, dock */
+.toast { position: fixed; left: 50%; top: max(14px, env(safe-area-inset-top, 0px)); transform: translate(-50%, -80px); background: var(--burgundy); color: var(--cream); padding: 10px 18px; border-radius: 99px; font-weight: 800; font-size: 13px; z-index: 90; transition: transform .3s cubic-bezier(.3,1.4,.5,1); max-width: calc(100vw - 32px); text-align: center; }
+.toast.show { transform: translate(-50%, 0); }
+.modal { position: fixed; inset: 0; z-index: 80; background: rgba(74,19,39,.5); display: grid; place-items: center; padding: 16px; }
+.modal[hidden] { display: none !important; }
+.receipt { width: min(100%, 360px); max-height: calc(100vh - 32px); overflow-y: auto; background: #fffdf8; color: #3a1a24; font-family: var(--font-mono); font-size: 13px; padding: 22px 22px 26px; border-radius: 6px; box-shadow: 0 24px 50px rgba(0,0,0,.35); position: relative; animation: rise .35s cubic-bezier(.3,1.4,.5,1); -webkit-mask: radial-gradient(circle 7px at 50% 100%, #0000 98%, #000) 0 100% / 18px 100% repeat-x, linear-gradient(#000, #000) 0 0 / 100% calc(100% - 7px) no-repeat; mask: radial-gradient(circle 7px at 50% 100%, #0000 98%, #000) 0 100% / 18px 100% repeat-x, linear-gradient(#000, #000) 0 0 / 100% calc(100% - 7px) no-repeat; padding-bottom: 34px; }
+@keyframes rise { from { transform: translateY(30px) scale(.96); opacity: 0; } }
+.receipt h2 { font-family: var(--font-display); font-weight: 400; font-size: 24px; text-align: center; margin: 0; color: var(--burgundy); }
+.receipt .meta { text-align: center; font-size: 11px; opacity: .65; margin: 4px 0 14px; }
+.rline { display: flex; justify-content: space-between; gap: 10px; padding: 3px 0; font-variant-numeric: tabular-nums; }
+.rline.sub { padding-left: 14px; opacity: .72; font-size: 12px; }
+.rline span:first-child { min-width: 0; }
+.rule { border: 0; border-top: 1.5px dashed rgba(58,26,36,.4); margin: 10px 0; }
+.rtotal { font-size: 17px; font-weight: 500; }
+.rnote { font-size: 11px; text-align: center; opacity: .6; margin: 10px 0 14px; }
+.ractions { display: flex; gap: 8px; }
+.ractions button { flex: 1; font-family: var(--font-body); font-weight: 800; font-size: 13px; border-radius: 99px; padding: 10px 8px; cursor: pointer; border: 2px solid var(--burgundy); background: transparent; color: var(--burgundy); }
+.ractions button.primary { background: var(--burgundy); color: var(--cream); }
+.thanks { text-align: center; padding: 6px 0; }
+.thanks big { display: block; font-family: var(--font-display); font-size: 26px; color: var(--burgundy); margin-bottom: 6px; }
+#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+.dock { display: none; }
+
+@media (max-width: 760px) {
+  body { padding-bottom: 96px; }
+  .wall { padding-top: 52px; }
+  .case { border-radius: 90px 90px 8px 8px / 52px 52px 8px 8px; padding-top: 34px; }
+  .counter { grid-template-columns: 1fr; justify-items: center; }
+  .boxwrap { order: -1; width: 100%; }
+  .register { order: 0; max-width: 240px; }
+  .cart-handle { left: -6px; height: 150px; }
+  .cart { max-width: min(100%, 420px); }
+  .toppings { order: 1; width: 100%; max-width: 360px; }
+  .dock { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; align-items: center; justify-content: space-between; gap: 12px; padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); background: var(--cream); border-top: 3px solid var(--burgundy); box-shadow: 0 -8px 18px rgba(74,19,39,.18); }
+  .dock-label { display: block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 800; color: var(--rose-deep); }
+  .dock b { font-family: var(--font-mono); font-size: 20px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  #checkout { display: none; }
+}
+@media (max-width: 480px) {
+  .actions { flex-wrap: nowrap; }
+  #muteText { display: none; }
+  .pill { padding: 8px 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mini, .mini .wheel { animation: none !important; }
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+</style>
+
+<!-- Pastry artwork lives here as fallback SVG. Set USE_PHOTOS = true in the script once your PNGs are in /assets. -->
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <defs>
+    <radialGradient id="g-sheen" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <filter id="f-sauce" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="1.4" stdDeviation="1.1" flood-color="#2a0f0a" flood-opacity=".38"/></filter>
+    <linearGradient id="g-pi" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f7b9ca"/><stop offset=".5" stop-color="#fbd5df"/><stop offset="1" stop-color="#e48aa6"/></linearGradient>
+  </defs>
+  <symbol id="a-swirl" viewBox="0 0 100 100">
+    <defs><radialGradient id="g-sw" cx=".38" cy=".32" r=".85"><stop offset="0" stop-color="#f3c27a"/><stop offset="1" stop-color="#b5622a"/></radialGradient></defs>
+    <ellipse cx="50" cy="88" rx="34" ry="6" fill="#5a1a30" opacity=".18"/>
+    <circle cx="50" cy="52" r="37" fill="url(#g-sw)"/>
+    <path d="M50 52a4 4 0 1 1 4 4a10 10 0 1 1-14-10a17 17 0 1 1 22 24a24 24 0 1 1-30-34" fill="none" stroke="#7b3a17" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M22 40q12-18 34-17" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="a-cookie" viewBox="0 0 100 100">
+    <defs><radialGradient id="g-ck" cx=".4" cy=".3" r=".9"><stop offset="0" stop-color="#ebbd7d"/><stop offset="1" stop-color="#b57432"/></radialGradient></defs>
+    <ellipse cx="50" cy="88" rx="34" ry="6" fill="#5a1a30" opacity=".18"/>
+    <path d="M50 15c10 0 15 6 24 8s14 12 13 23c-1 9 5 14 0 25s-14 12-22 14-14 8-25 4-18-8-22-18-8-14-2-24 4-14 14-20 12-12 20-12z" fill="url(#g-ck)"/>
+    <g fill="#3b1c10">
+      <rect x="32" y="30" width="13" height="9" rx="3" transform="rotate(-20 38 34)"/>
+      <rect x="56" y="26" width="12" height="9" rx="3" transform="rotate(18 62 30)"/>
+      <rect x="64" y="50" width="13" height="9" rx="3" transform="rotate(-12 70 54)"/>
+      <rect x="24" y="52" width="12" height="9" rx="3" transform="rotate(25 30 56)"/>
+      <rect x="44" y="48" width="13" height="9" rx="3" transform="rotate(8 50 52)"/>
+      <rect x="40" y="68" width="12" height="8" rx="3" transform="rotate(-18 46 72)"/>
+      <rect x="62" y="70" width="10" height="7" rx="3" transform="rotate(20 67 73)"/>
+    </g>
+    <path d="M26 34q10-12 26-14" fill="none" stroke="#fff" stroke-opacity=".4" stroke-width="3.5" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="a-croissant" viewBox="0 0 100 100">
+    <defs><linearGradient id="g-cr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8cd82"/><stop offset="1" stop-color="#bf7428"/></linearGradient></defs>
+    <ellipse cx="50" cy="88" rx="38" ry="6" fill="#5a1a30" opacity=".18"/>
+    <g transform="translate(0 10)">
+      <path d="M6 66C8 36 32 22 50 22s42 14 44 44c-8-8-16-10-24-8-4-14-12-20-20-20s-16 6-20 20c-8-2-16 0-24 8z" fill="url(#g-cr)"/>
+      <g fill="none" stroke="#8f5118" stroke-width="2.4" stroke-linecap="round" opacity=".7">
+        <path d="M50 38v18"/><path d="M36 42q-4 8-6 16"/><path d="M64 42q4 8 6 16"/><path d="M22 50q-6 6-8 14"/><path d="M78 50q6 6 8 14"/>
+      </g>
+      <path d="M26 36q14-12 30-9" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="3.5" stroke-linecap="round"/>
+    </g>
+  </symbol>
+  <symbol id="a-danish" viewBox="0 0 100 100">
+    <defs><linearGradient id="g-da" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1c079"/><stop offset="1" stop-color="#b9702c"/></linearGradient></defs>
+    <ellipse cx="50" cy="88" rx="36" ry="6" fill="#5a1a30" opacity=".18"/>
+    <rect x="11" y="22" width="78" height="62" rx="22" fill="url(#g-da)" transform="rotate(-6 50 53)"/>
+    <rect x="23" y="33" width="54" height="40" rx="15" fill="#f6dfa7" transform="rotate(-6 50 53)"/>
+    <g transform="rotate(-6 50 53)">
+      <path d="M30 42c5-7 15-7 17 0 1 7-7 15-9 15s-10-8-8-15z" fill="#d6283f"/>
+      <path d="M52 40c5-7 15-7 17 0 1 7-7 15-9 15s-10-8-8-15z" fill="#d6283f"/>
+      <path d="M38 55c5-7 15-7 17 0 1 7-7 14-9 14s-10-7-8-14z" fill="#d6283f"/>
+      <g fill="#ff8a98"><ellipse cx="38" cy="45" rx="3" ry="4"/><ellipse cx="60" cy="43" rx="3" ry="4"/><ellipse cx="46" cy="58" rx="3" ry="4"/></g>
+    </g>
+    <path d="M18 34q8-9 24-11" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="3.5" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="a-knot" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="88" rx="34" ry="6" fill="#5a1a30" opacity=".18"/>
+    <path d="M18 66C12 34 58 30 58 56C58 78 28 76 34 52C40 28 86 36 82 66" fill="none" stroke="#9a5a1c" stroke-width="18" stroke-linecap="round"/>
+    <path d="M18 66C12 34 58 30 58 56C58 78 28 76 34 52C40 28 86 36 82 66" fill="none" stroke="#e0a455" stroke-width="13" stroke-linecap="round"/>
+    <path d="M18 64C13 36 56 31 57 55" fill="none" stroke="#f6d092" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+    <g fill="#fffaf0"><circle cx="30" cy="42" r="1.8"/><circle cx="44" cy="36" r="1.8"/><circle cx="56" cy="46" r="1.8"/><circle cx="62" cy="38" r="1.8"/><circle cx="74" cy="42" r="1.8"/><circle cx="40" cy="62" r="1.8"/><circle cx="26" cy="58" r="1.8"/><circle cx="80" cy="58" r="1.8"/></g>
+  </symbol>
+  <symbol id="a-babka" viewBox="0 0 100 100">
+    <defs><linearGradient id="g-ba" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5f2d1b"/><stop offset="1" stop-color="#2a100a"/></linearGradient></defs>
+    <ellipse cx="50" cy="88" rx="38" ry="6" fill="#5a1a30" opacity=".18"/>
+    <rect x="11" y="30" width="78" height="52" rx="25" fill="#a8602a"/>
+    <rect x="13" y="30" width="74" height="47" rx="23" fill="url(#g-ba)"/>
+    <g fill="none" stroke="#c98a4a" stroke-width="5" stroke-linecap="round">
+      <path d="M24 42c14 9 24-6 38 2s16 4 24 0"/><path d="M20 58c14 9 26-6 40 2s18 2 26-2"/>
+    </g>
+    <path d="M26 38q20-8 46-2" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="a-pitcher" viewBox="0 0 100 100">
+    <ellipse cx="48" cy="93" rx="28" ry="5" fill="#5a1a30" opacity=".2"/>
+    <path d="M76 44c18-2 18 26 0 28" fill="none" stroke="#e48aa6" stroke-width="7" stroke-linecap="round"/>
+    <path d="M22 34c0-7 10-11 26-11s26 4 26 11c0 8-5 14-5 28 0 12 5 22 5 28H22c0-6 5-16 5-28 0-14-5-20-5-28z" fill="url(#g-pi)"/>
+    <ellipse cx="48" cy="33" rx="25" ry="8" fill="#f6a9bd"/>
+    <path d="M24 33c3-13 45-13 48 0z" fill="var(--fill, #fff)"/>
+    <ellipse cx="48" cy="33" rx="24" ry="6.5" fill="var(--fill, #fff)"/>
+    <ellipse cx="48" cy="31" rx="22" ry="5" fill="url(#g-sheen)"/><path d="M30 34c-.5 6 2 10 4 10s3.5-3.5 2-10z" fill="var(--fill,#fff)" stroke="rgba(120,60,80,.25)" stroke-width=".8"/><path d="M31 30q10-3.5 21-2.2" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="1.7" stroke-linecap="round"/><path d="M52 36q8 2 16-.5" fill="none" stroke="rgba(90,50,30,.25)" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M32 50c-2 12-1 24 1 34" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M26 74h44" stroke="#c8627f" stroke-opacity=".35" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+<header class="masthead">
+  <div class="logo">
+    <span class="logo-name">Rosie Crumb</span>
+    <span class="logo-sub">Bakery &middot; baked at 6:00 am</span>
+  </div>
+  <div class="actions">
+  <button class="pill" id="homeBtn" type="button" aria-label="Back to the start screen">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+    <span>Home</span>
+  </button>
+  <button class="pill" id="mute" type="button" aria-pressed="false" aria-label="Turn sound off">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path id="wave" d="M17 9c1.5 1.5 1.5 4.5 0 6"/></svg>
+    <span id="muteText">Sound on</span>
+  </button>
+  </div>
+</header>
+
+<main class="scene">
+  <section class="casepic" aria-label="Display case">
+    <div class="boxchip" id="boxchip">Your box (<b>0</b>)</div>
+    <div class="frame" id="frame" role="group" aria-label="Pastry display case">
+      <img src="assets/case.jpg" alt="A pink glass bakery display case holding a croissant, cinnamon roll, cookie, danish, chocolate bun and strawberry tart" draggable="false">
+    </div>
+  </section>
+
+  <section class="counter" aria-label="Counter">
+    <div class="register">
+      <div class="reg-sign" id="regTotal" role="status" aria-label="Order total">$0.00</div>
+      <div class="reg-body">
+        <div class="reg-screen" id="regScreen">0 items</div>
+        <div class="reg-keys" id="regKeys" aria-hidden="true"></div>
+        <div class="reg-drawer" aria-hidden="true"></div>
+      </div>
+      <div class="reg-label">Running total</div>
+    </div>
+
+    <div class="boxwrap">
+      <div class="cart" id="cart"><div class="cart-handle" aria-hidden="true"></div><div class="box" id="box" role="list" aria-label="Your pastry box">
+        <div class="boxmsg" id="boxMsg" role="status">Box is full!</div>
+      </div>
+      <div class="cart-legs" aria-hidden="true"><i class="strut l"></i><i class="strut r"></i><i class="wheel"></i><i class="wheel"></i></div></div>
+      <button class="checkout" id="checkout" type="button">Checkout</button>
+      <p class="hint" id="hint">Tap a pastry to add it. Tap a pitcher or jar to top the last pastry in the box. Tap one in the box to put it back.</p>
+    </div>
+
+    <div class="toppings" id="toppings" role="group" aria-label="Toppings"></div>
+  </section>
+</main>
+
+<div class="dock">
+  <div><span class="dock-label">Total</span><b id="dockTotal">$0.00</b></div>
+  <button class="checkout" id="checkout2" type="button">Checkout</button>
+</div>
+
+<div class="start" id="start" role="dialog" aria-modal="true" aria-labelledby="stitle">
+  <div class="awning" aria-hidden="true"></div>
+  <div class="start-card">
+    <div class="start-kicker">Open since 6:00 am</div>
+    <h1 class="start-title" id="stitle">Rosie Crumb<span>Bakery</span></h1>
+    <p class="start-sub">Fill your box, pick your toppings, ring it up.</p>
+    <div class="cart mini" aria-hidden="true">
+      <div class="cart-handle"></div>
+      <div class="box"><img src="assets/croissant.png" alt=""><img src="assets/cinnamon-roll.png" alt=""><img src="assets/cookie.png" alt=""></div>
+      <div class="cart-legs"><i class="strut l"></i><i class="strut r"></i><i class="wheel"></i><i class="wheel"></i></div>
+    </div>
+    <ol class="steps">
+      <li>Tap a pastry to drop it in your cart</li>
+      <li>Tap a pitcher or jar to top the last one</li>
+      <li>Check out when the register looks right</li>
+    </ol>
+    <button class="startbtn" id="startBtn" type="button">Start shopping</button>
+    <small>Sound is on. Use the speaker button to mute.</small>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="rtitle"><div class="receipt" id="receipt"></div></div>
+
+<script>
+/* ---------- Edit here: pastries, prices, toppings ----------
+   To use your own photos: put transparent PNGs in an /assets folder next to this file
+   and set USE_PHOTOS = true. If an image fails to load, the drawn pastry is shown instead. */
+const USE_PHOTOS = true;
+/* image = transparent cutout shown in the box. sym = drawn fallback if the image is missing. */
+const PRODUCTS = [
+  { id: 'croissant',       name: 'Croissant',       price: 4.50, image: 'assets/croissant.png', ar: 1.9026,       sym: 'croissant' },
+  { id: 'cinnamon-roll',   name: 'Cinnamon Roll',   price: 5.00, image: 'assets/cinnamon-roll.png', ar: 1.3663,   sym: 'swirl' },
+  { id: 'cookie',          name: 'Cookie',          price: 4.00, image: 'assets/cookie.png', ar: 1.7875,          sym: 'cookie' },
+  { id: 'danish',          name: 'Danish',          price: 5.50, image: 'assets/danish.png', ar: 1.5114,          sym: 'danish' },
+  { id: 'chocolate-bun',   name: 'Chocolate Bun',   price: 5.00, image: 'assets/chocolate-bun.png', ar: 1.7844,   sym: 'babka' },
+  { id: 'strawberry-tart', name: 'Strawberry Tart', price: 6.00, image: 'assets/strawberry-tart.png', ar: 1.6788, sym: 'danish' }
+];
+/* Clickable areas on assets/case.jpg (1448 x 1086 px): a = pastry, h = pastry + plate + price card */
+const HOTS = {
+  'croissant':       { a: [150,215,560,425], h: [150,215,560,470] },
+  'cinnamon-roll':   { a: [585,235,895,425], h: [560,235,910,470] },
+  'cookie':          { a: [955,240,1265,415], h: [935,240,1290,470] },
+  'danish':          { a: [150,515,535,700], h: [130,515,545,770] },
+  'chocolate-bun':   { a: [560,505,890,700], h: [550,505,915,770] },
+  'strawberry-tart': { a: [965,505,1285,690], h: [935,505,1300,770] }
+};
+const IMG_W = 1448, IMG_H = 1086;
+const TOPPINGS = [
+  { id: 'cream',    kind: 'sauce', name: 'Cream cheese frosting', short: 'Cream cheese frosting', price: 1.00, color: '#fff6e4', image: null },
+  { id: 'choc',     kind: 'sauce', name: 'Chocolate crunch',      short: 'Chocolate crunch',      price: 1.50, color: '#4b2415', image: null },
+  { id: 'pist',     kind: 'sauce', name: 'Pistachio cream',       short: 'Pistachio cream',       price: 1.50, color: '#b9ca7c', image: null },
+  { id: 'chips',    kind: 'bits',  name: 'Chocolate chips',       short: 'Chocolate chips',       price: 0.75, color: '#3b1c10', image: null },
+  { id: 'sprinkle', kind: 'bits',  name: 'Rainbow sprinkles',     short: 'Rainbow sprinkles',     price: 0.50, color: '#ff7aa8', image: null }
+];
+const CAPACITY = 6;
+/* ------------------------------------------------------------ */
+
+const $ = (s, r = document) => r.querySelector(s);
+const money = n => '$' + n.toFixed(2);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const byId = (arr, id) => arr.find(x => x.id === id);
+const esc = v => String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const topsOf = it => it.tops.map(id => byId(TOPPINGS, id)).filter(Boolean);
+const rnd = (a, b) => a + Math.random() * (b - a);
+
+let box = [], uid = 0, shown = 0, rafId = 0, muted = false, ac = null, specials = [];
+const maskCache = {}, maskData = {};
+
+function art(p, cls = 'art') {
+  const fb = `<svg class="${cls}" viewBox="0 0 100 100" aria-hidden="true"><use href="#a-${p.sym}"/></svg>`;
+  if (USE_PHOTOS && p.image) {
+    const esc = fb.replace(/"/g, '&quot;');
+    return `<img class="${cls}" src="${p.image}" alt="" draggable="false" onerror="this.outerHTML='${esc}'">`;
+  }
+  return fb;
+}
+
+/* ---------- realistic sauce layers (drawn once, reused per box item) ---------- */
+const SAUCE = {
+  cream: { stops: ['#ffffff', '#f8eedb', '#d9c39c'], gloss: .9,  edge: 'rgba(130,95,50,.30)', swirl: 'rgba(185,150,100,.28)' },
+  choc:  { stops: ['#9a5d3d', '#4a2415', '#1b0a05'], gloss: .75, edge: 'rgba(0,0,0,.45)',      swirl: 'rgba(0,0,0,.25)' },
+  pist:  { stops: ['#e8f3c0', '#bdd084', '#8aa058'], gloss: .6,  edge: 'rgba(70,90,30,.32)',   swirl: 'rgba(100,125,50,.25)' }
+};
+function buildSauces() {
+  const shape = 'M13 37C14 29 28 26 41 28C53 24 69 26 80 30C89 34 89 42 83 44C81 51 77.5 51 76.5 45C72 46 70.5 53 68.5 59C66.5 63 62.5 62.5 62 56C61.5 50.5 58 47 52.5 46.5C48 46 46.5 50 45.5 55C44.5 60 40.5 60 39.5 55C38.5 50 36.5 47 32 46.5C28 46.5 27 52 25 56.5C23 60.5 19.5 59.5 19.5 54.5C19.5 50.5 21.5 47 17.5 45C13.5 43 12 40.5 13 37Z';
+  let out = '';
+  Object.entries(SAUCE).forEach(([id, c]) => {
+    out += `<radialGradient id="g-${id}" cx=".4" cy=".25" r=".85"><stop offset="0" stop-color="${c.stops[0]}"/><stop offset=".55" stop-color="${c.stops[1]}"/><stop offset="1" stop-color="${c.stops[2]}"/></radialGradient>`;
+    out += `<symbol id="s-${id}" viewBox="0 0 100 100" overflow="visible"><g filter="url(#f-sauce)">
+      <path d="${shape}" fill="url(#g-${id})" stroke="${c.edge}" stroke-width=".9" stroke-linejoin="round"/>
+      <path d="M20 41C30 44 40 40 52 42C62 44 72 42 82 40" fill="none" stroke="${c.swirl}" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M22 34C33 29.5 48 29.5 62 32" fill="none" stroke="#fff" stroke-opacity="${c.gloss}" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M68 33.5C73 34 77 35.5 80 37.5" fill="none" stroke="#fff" stroke-opacity="${c.gloss * .8}" stroke-width="1.6" stroke-linecap="round"/>
+      <g fill="none" stroke="#fff" stroke-opacity="${c.gloss * .85}" stroke-width="1.3" stroke-linecap="round">
+        <path d="M22.3 50.5v5"/><path d="M42.3 51.5v4.5"/><path d="M65.3 51v6"/>
+      </g>
+    </g></symbol>`;
+  });
+  $('.sprite').insertAdjacentHTML('beforeend', out);
+}
+
+/* ---------- topping jars (chocolate chips, sprinkles) ---------- */
+function buildJars() {
+  let seed = 11; const R = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const cols = ['#ff5d8f', '#ffd23f', '#3ec7d9', '#7bd34a', '#ff8a3d', '#ffffff', '#a27bff'];
+  let chips = '', spr = '';
+  for (let i = 0; i < 24; i++) {
+    const x = 30 + R() * 40, y = 52 + R() * 36, r = R() * 360, k = 4 + R() * 2.2;
+    chips += `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${r.toFixed(0)})"><path d="M${-k} ${k * .6}Q${-k * .7} ${-k} 0 ${-k * .8}Q${k} ${-k * .5} ${k * .8} ${k * .7}Z" fill="#3b1c10"/><path d="M${-k * .4} ${-k * .3}Q0 ${-k * .7} ${k * .4} ${-k * .3}" stroke="#a87650" stroke-width=".9" fill="none" stroke-linecap="round"/></g>`;
+  }
+  for (let i = 0; i < 46; i++) {
+    const x = 29 + R() * 42, y = 50 + R() * 38, r = R() * 180;
+    spr += `<rect x="-3.4" y="-.95" width="6.8" height="1.9" rx=".95" fill="${cols[i % cols.length]}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${r.toFixed(0)})"/>`;
+  }
+  const defs = `<linearGradient id="g-glass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".62"/><stop offset=".55" stop-color="#fff0f4" stop-opacity=".3"/><stop offset="1" stop-color="#f4b8c8" stop-opacity=".42"/></linearGradient>
+    <linearGradient id="g-lid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3a9bd"/><stop offset="1" stop-color="#c8627f"/></linearGradient>
+    <clipPath id="jc-body"><rect x="24" y="26" width="52" height="66" rx="12"/></clipPath>
+    <clipPath id="jc-pile"><path d="M20 55Q50 44 80 55V96H20Z"/></clipPath>`;
+  const jar = inner => `<ellipse cx="50" cy="94" rx="28" ry="4.5" fill="#5a1a30" opacity=".2"/>
+    <rect x="24" y="26" width="52" height="66" rx="12" fill="url(#g-glass)" stroke="rgba(190,110,140,.65)" stroke-width="1.6"/>
+    <g clip-path="url(#jc-body)"><g clip-path="url(#jc-pile)">${inner}</g></g>
+    <path d="M31 38c-1.2 10-1.2 30 0 44" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="3" stroke-linecap="round"/>
+    <rect x="21" y="13" width="58" height="15" rx="6" fill="url(#g-lid)"/><rect x="21" y="25" width="58" height="3.2" fill="#C9A24B"/>
+    <rect x="26" y="15.5" width="22" height="2.4" rx="1.2" fill="#fff" opacity=".5"/>`;
+  $('.sprite').insertAdjacentHTML('beforeend', defs +
+    `<symbol id="a-jar-chips" viewBox="0 0 100 100" overflow="visible">${jar(chips)}</symbol>` +
+    `<symbol id="a-jar-sprinkle" viewBox="0 0 100 100" overflow="visible">${jar(spr)}</symbol>`);
+}
+
+/* alpha mask of each pastry, used to place chips and sprinkles on the pastry itself */
+function loadMask(p) {
+  if (maskCache[p.id]) return maskCache[p.id];
+  return maskCache[p.id] = new Promise(res => {
+    let src = null;
+    if (USE_PHOTOS && p.image) src = p.image;
+    else {
+      const sym = document.getElementById('a-' + p.sym);
+      if (sym) src = 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">${sym.innerHTML}</svg>`);
+    }
+    if (!src) return res(null);
+    const im = new Image();
+    im.onload = () => {
+      try {
+        const W = 64, H = Math.max(8, Math.round(W * im.naturalHeight / im.naturalWidth));
+        const c = document.createElement('canvas'); c.width = W; c.height = H;
+        const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0, W, H);
+        maskData[p.id] = { W, H, d: x.getImageData(0, 0, W, H).data };
+      } catch (e) { delete maskData[p.id]; }
+      res(maskData[p.id] || null);
+    };
+    im.onerror = () => res(null);
+    im.src = src;
+  });
+}
+function pickPoints(p, n, ar, minD) {
+  const m = maskData[p.id], pts = [];
+  for (let tries = 0; pts.length < n && tries < 900; tries++) {
+    const x = rnd(.08, .92), y = rnd(.05, p.image ? .62 : .78);
+    if (m) {
+      const ix = Math.min(m.W - 1, Math.floor(x * m.W)), iy = Math.min(m.H - 1, Math.floor(y * m.H));
+      if (m.d[(iy * m.W + ix) * 4 + 3] < 200) continue;
+    } else {
+      const dx = (x - .5) / .38, dy = (y - .4) / .3;
+      if (dx * dx + dy * dy > 1) continue;
+    }
+    if (pts.some(q => Math.hypot(q.x - x, (q.y - y) / ar) < minD)) continue;
+    pts.push({ x, y });
+  }
+  return pts;
+}
+function makeBits(p, t) {
+  const ar = p.image && p.ar ? p.ar : 1, chips = t.id === 'chips';
+  const cols = ['#ff5d8f', '#ffd23f', '#3ec7d9', '#7bd34a', '#ff8a3d', '#ffffff', '#a27bff'];
+  return pickPoints(p, chips ? 11 : 40, ar, chips ? .095 : .05).map((q, i) => ({
+    x: +(q.x * 100).toFixed(1), y: +(q.y * 100).toFixed(1),
+    s: +(chips ? rnd(7, 9) : rnd(6.5, 8.5)).toFixed(1), r: Math.round(rnd(0, 360)), dl: Math.round(rnd(0, 380)),
+    c: chips ? '' : cols[i % cols.length]
+  }));
+}
+function bitsEl(it, p, t, fresh) {
+  it.bits = it.bits || {};
+  if (!it.bits[t.id]) it.bits[t.id] = makeBits(p, t);
+  const w = document.createElement('span');
+  w.className = 'bits' + (fresh ? ' fresh' : '');
+  w.style.aspectRatio = String(p.image && p.ar ? p.ar : 1);
+  w.setAttribute('aria-hidden', 'true');
+  w.innerHTML = it.bits[t.id].map(b => `<i class="${t.id}" style="--x:${b.x};--y:${b.y};--s:${b.s};--r:${b.r}deg;--dl:${b.dl}ms;--c:${b.c || 'none'}"></i>`).join('');
+  return w;
+}
+
+/* ---------- build the shop ---------- */
+function buildShelves() {
+  buildSauces();
+  buildJars();
+  const frame = $('#frame');
+  PRODUCTS.forEach(p => {
+    const H = HOTS[p.id], [hx0, hy0, hx1, hy1] = H.h, [ax0, ay0, ax1, ay1] = H.a;
+    const hw = hx1 - hx0, hh = hy1 - hy0;
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'pastry hot'; b.dataset.pid = p.id;
+    b.style.cssText = `left:${hx0 / IMG_W * 100}%;top:${hy0 / IMG_H * 100}%;width:${hw / IMG_W * 100}%;height:${hh / IMG_H * 100}%`;
+    b.setAttribute('aria-label', `Add ${p.name}, ${money(p.price)}, to your box`);
+    b.innerHTML = `<span class="anchor" style="left:${(ax0 - hx0) / hw * 100}%;top:${(ay0 - hy0) / hh * 100}%;width:${(ax1 - ax0) / hw * 100}%;height:${(ay1 - ay0) / hh * 100}%"><span class="glow"></span><span class="addpill">Add ${money(p.price)}</span><span class="badge" hidden></span></span>`;
+    b.addEventListener('click', () => addItem(p.id, b));
+    frame.append(b);
+  });
+  TOPPINGS.forEach(t => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'pitcher' + (t.kind === 'bits' ? ' jar' : ''); b.dataset.tid = t.id;
+    b.setAttribute('aria-label', `Add ${t.name} to the last pastry in your box, plus ${money(t.price)}`);
+    const pic = t.kind === 'bits'
+      ? `<svg class="pitch-art" viewBox="0 0 100 100" aria-hidden="true"><use href="#a-jar-${t.id}"/></svg>`
+      : `<svg class="pitch-art" viewBox="0 0 100 100" style="--fill:${t.color}" aria-hidden="true"><use href="#a-pitcher"/></svg>`;
+    b.innerHTML = `${pic}<div class="pill-label">${t.short}<span>+${money(t.price)}</span></div>`;
+    b.addEventListener('click', () => pour(t.id, b));
+    $('#toppings').append(b);
+  });
+  const keys = $('#regKeys');
+  for (let i = 0; i < 24; i++) keys.append(document.createElement('i'));
+}
+
+/* ---------- box rendering ---------- */
+function sauceEdge(ar) {
+  const W = +(100 * ar).toFixed(1), n = Math.max(3, Math.round(W / 30)), seg = W / n, ph = rnd(0, 6);
+  const yb = x => 41 + 2.6 * Math.sin(x / W * Math.PI * 3 + ph);
+  const xs = Array.from({ length: n }, (_, i) => (i + .5) * seg + rnd(-seg * .16, seg * .16));
+  let d = `M0 -30 L${W} -30 L${W} ${yb(W).toFixed(1)}`;
+  for (let i = n - 1; i >= 0; i--) {
+    const x = xs[i], w = rnd(9, 14), r = w / 2, y = yb(x);
+    const len = w * 1.1 + (Math.random() < .35 ? rnd(0, 3) : rnd(6, 17));
+    const xr = x + r, xl = x - r;
+    d += ` L${(xr + 4).toFixed(1)} ${y.toFixed(1)} C${(xr + 1).toFixed(1)} ${y.toFixed(1)} ${xr.toFixed(1)} ${(y + len * .3).toFixed(1)} ${xr.toFixed(1)} ${(y + len - r).toFixed(1)}`;
+    d += ` A${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${xl.toFixed(1)} ${(y + len - r).toFixed(1)}`;
+    d += ` C${xl.toFixed(1)} ${(y + len * .3).toFixed(1)} ${(xl - 1).toFixed(1)} ${y.toFixed(1)} ${(xl - 4).toFixed(1)} ${y.toFixed(1)}`;
+  }
+  d += ` L0 ${yb(0).toFixed(1)} Z`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} 100" preserveAspectRatio="none"><path d="${d}" fill="#000"/></svg>`;
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+function sauceEl(it, p, t, fresh) {
+  if (!it.edge || it.edgeFor !== t.id) { it.edge = sauceEdge(p.ar); it.edgeFor = t.id; }
+  const sc = document.createElement('span');
+  sc.className = 'sauceclip' + (fresh ? ' fresh' : '');
+  sc.style.aspectRatio = String(p.ar);
+  sc.style.setProperty('--img', `url("${p.image}")`);
+  sc.style.setProperty('--edge', `url("${it.edge}")`);
+  sc.innerHTML = `<span class="sw"><i class="su"></i><i class="sf t-${t.id}"></i></span>`;
+  sc.setAttribute('aria-hidden', 'true');
+  return sc;
+}
+
+function renderBox(pendingUid, freshUid, freshTid) {
+  const el = $('#box');
+  [...el.querySelectorAll('.slot')].forEach(s => s.remove());
+  for (let i = 0; i < CAPACITY; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'slot'; slot.setAttribute('role', 'listitem');
+    const it = box[i];
+    if (it) {
+      const p = byId(PRODUCTS, it.pid), ts = topsOf(it);
+      const sauce = ts.find(t => t.kind === 'sauce'), bits = ts.filter(t => t.kind === 'bits');
+      const isFresh = t => it.uid === freshUid && t.id === freshTid;
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'bitem' + (it.uid === pendingUid ? ' pending' : '');
+      b.dataset.uid = it.uid; b.style.setProperty('--rot', it.rot + 'deg'); b.style.transform = `rotate(${it.rot}deg)`;
+      b.setAttribute('aria-label', `Remove ${p.name}${ts.length ? ' with ' + ts.map(t => t.name).join(' and ') : ''} from your box`);
+      const photoSauce = USE_PHOTOS && p.image && p.ar;
+      b.innerHTML = art(p) + (sauce && !photoSauce ? `<svg class="sauce${isFresh(sauce) ? ' fresh' : ''}" viewBox="0 0 100 100" aria-hidden="true"><use href="#s-${sauce.id}" width="100" height="100"/></svg>` : '');
+      if (sauce && photoSauce) b.append(sauceEl(it, p, sauce, isFresh(sauce)));
+      bits.forEach(t => b.append(bitsEl(it, p, t, isFresh(t))));
+      b.addEventListener('click', () => removeItem(it.uid, b));
+      slot.append(b);
+    }
+    el.append(slot);
+  }
+}
+
+function total() {
+  return box.reduce((s, it) => s + byId(PRODUCTS, it.pid).price + topsOf(it).reduce((a, t) => a + t.price, 0), 0);
+}
+function paint(v) {
+  $('#regTotal').textContent = money(v);
+  $('#dockTotal').textContent = money(v);
+}
+function paintBadges() {
+  document.querySelectorAll('[data-pid]').forEach(h => {
+    const bd = $('.badge', h); if (!bd) return;
+    const n = box.filter(x => x.pid === h.dataset.pid).length;
+    bd.textContent = '\u00d7' + n; bd.hidden = n === 0;
+  });
+}
+function updateAll(instant) {
+  const t = total();
+  $('#boxchip').innerHTML = `Your box (<b>${box.length}</b>)`;
+  paintBadges();
+  $('#regScreen').textContent = box.length === 1 ? '1 item' : `${box.length} items`;
+  ['#checkout', '#checkout2'].forEach(s => $(s).disabled = box.length === 0);
+  cancelAnimationFrame(rafId);
+  if (instant || reduce) { shown = t; paint(t); return; }
+  const from = shown, t0 = performance.now(), d = 480;
+  (function step(now) {
+    const p = Math.min(1, (now - t0) / d), e = 1 - Math.pow(1 - p, 3);
+    shown = from + (t - from) * e; paint(shown);
+    if (p < 1) rafId = requestAnimationFrame(step); else { shown = t; paint(t); }
+  })(t0);
+  const keys = $('#regKeys').children;
+  for (let i = 0; i < 3; i++) { const k = keys[Math.floor(Math.random() * keys.length)]; k.classList.add('press'); setTimeout(() => k.classList.remove('press'), 160); }
+}
+
+/* ---------- flying motion ---------- */
+function fly(from, to, html, rotEnd, done) {
+  if (reduce) { done(); return; }
+  const c = document.createElement('div');
+  c.className = 'flyer'; c.innerHTML = html;
+  c.style.cssText = `left:${from.left}px;top:${from.top}px;width:${from.width}px;height:${from.height}px`;
+  document.body.append(c);
+  const dx = (to.left + to.width / 2) - (from.left + from.width / 2);
+  const dy = (to.top + to.height / 2) - (from.top + from.height / 2);
+  const s = to.width / from.width;
+  const lift = Math.max(80, Math.abs(dy) * .35 + 60);
+  const a = c.animate([
+    { transform: 'translate(0,0) scale(1) rotate(0deg)' },
+    { transform: `translate(${dx * .5}px, ${dy * .5 - lift}px) scale(${(1 + s) / 2 * 1.08}) rotate(${rotEnd * .5 + 90}deg)`, offset: .5 },
+    { transform: `translate(${dx}px, ${dy}px) scale(${s}) rotate(${rotEnd + 360}deg)` }
+  ], { duration: 640, easing: 'cubic-bezier(.35,.6,.4,1)', fill: 'forwards' });
+  a.onfinish = () => { c.remove(); done(); };
+}
+
+/* ---------- actions ---------- */
+function addItem(pid, srcEl) {
+  initAudio();
+  if (box.length >= CAPACITY) { wiggle(); return; }
+  const p = byId(PRODUCTS, pid);
+  const it = { uid: ++uid, pid, tops: [], rot: Math.round(rnd(-6, 6)) };
+  box.push(it);
+  renderBox(it.uid);
+  updateAll(false);
+  const target = $(`.bitem[data-uid="${it.uid}"]`);
+  const from = ($('.anchor', srcEl) || $('.art', srcEl) || srcEl).getBoundingClientRect();
+  const to = $('.art', target).getBoundingClientRect();
+  const reveal = () => { target.classList.remove('pending'); target.classList.add('land'); ding(); bumpCart(); };
+  fly(from, to, art(p), it.rot, reveal);
+}
+
+function bumpCart() {
+  const c = $('#cart'); if (reduce) return;
+  c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump');
+  c.addEventListener('animationend', e => { if (e.target === c) c.classList.remove('bump'); }, { once: true });
+}
+
+function startGame() {
+  initAudio(); ding(true);
+  const st = $('#start'), c = $('#cart');
+  document.body.classList.remove('locked');
+  st.classList.add('out');
+  setTimeout(() => { st.hidden = true; }, 600);
+  if (!reduce) {
+    document.body.classList.add('rolling');
+    c.classList.add('roll');
+    setTimeout(() => { c.classList.remove('roll'); document.body.classList.remove('rolling'); }, 1300);
+  }
+  window.scrollTo(0, 0);
+}
+function showStart() {
+  const st = $('#start'); st.hidden = false; void st.offsetWidth; st.classList.remove('out');
+  document.body.classList.add('locked'); $('#startBtn').focus();
+}
+
+function removeItem(id, el) {
+  const i = box.findIndex(x => x.uid === id);
+  if (i < 0) return;
+  const it = box[i], p = byId(PRODUCTS, it.pid);
+  const shelfArt = $(`[data-pid="${it.pid}"] .anchor`) || $(`[data-pid="${it.pid}"] .art`) || el;
+  const from = $('.art', el).getBoundingClientRect();
+  const to = shelfArt.getBoundingClientRect();
+  el.style.visibility = 'hidden';
+  box.splice(i, 1);
+  fly(from, to, art(p), 0, () => {});
+  setTimeout(() => { renderBox(); updateAll(false); }, reduce ? 0 : 120);
+  updateAllTotalOnly();
+}
+function updateAllTotalOnly() { /* total is recalculated in updateAll after the box re-renders */ }
+
+async function pour(tid, btn) {
+  initAudio();
+  if (!box.length) { toast('Add a pastry to your box first.'); return; }
+  const it = box[box.length - 1], p = byId(PRODUCTS, it.pid), tp = byId(TOPPINGS, tid);
+  if (it.tops.includes(tid)) { toast(`${p.name} already has ${tp.name.toLowerCase()}.`); return; }
+  btn.classList.remove('pour'); void btn.offsetWidth; btn.classList.add('pour');
+  btn.addEventListener('animationend', () => btn.classList.remove('pour'), { once: true });
+  const tgt = $(`.bitem[data-uid="${it.uid}"]`);
+  if (tp.kind === 'sauce' && tgt) setTimeout(() => stream(btn, tp.color === '#fff6e4' ? '#f4e8d0' : tp.color, tgt), 240);
+  const wait = reduce ? 0 : (tp.kind === 'bits' ? 420 : 600);
+  await Promise.all([tp.kind === 'bits' ? loadMask(p) : null, new Promise(r => setTimeout(r, wait))]);
+  if (!box.includes(it)) return;
+  let swapped = false;
+  if (tp.kind === 'sauce') {
+    const before = it.tops.length;
+    it.tops = it.tops.filter(id => byId(TOPPINGS, id).kind !== 'sauce');
+    swapped = it.tops.length !== before;
+  }
+  it.tops.push(tid);
+  renderBox(null, it.uid, tid); updateAll(false); ding(true);
+  if (swapped) toast(`Swapped the sauce for ${tp.name.toLowerCase()}.`);
+}
+
+function stream(btn, color, target) {
+  if (reduce) return;
+  const pr = $('.pitch-art', btn).getBoundingClientRect(), tr = target.getBoundingClientRect();
+  const sx = pr.left + pr.width * .04, sy = pr.top + pr.height * .3;
+  const tx = tr.left + tr.width * .5, ty = tr.top + tr.height * .4;
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('style', 'position:fixed;inset:0;width:100%;height:100%;z-index:70;pointer-events:none');
+  svg.setAttribute('viewBox', `0 0 ${innerWidth} ${innerHeight}`);
+  const d = `M${sx} ${sy} C${sx - 46} ${sy + 8} ${tx + 14} ${ty - 110} ${tx} ${ty}`;
+  const mk = (stroke, w, op) => {
+    const p = document.createElementNS(ns, 'path');
+    p.setAttribute('d', d); p.setAttribute('fill', 'none'); p.setAttribute('stroke', stroke);
+    p.setAttribute('stroke-width', w); p.setAttribute('stroke-linecap', 'round'); p.setAttribute('stroke-opacity', op);
+    svg.append(p); return p;
+  };
+  const base = mk(color, 8, 1), sheen = mk('#fff', 2, .55);
+  document.body.append(svg);
+  [base, sheen].forEach(p => {
+    const len = p.getTotalLength(); p.style.strokeDasharray = len;
+    p.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 380, easing: 'ease-in', fill: 'forwards' });
+  });
+  setTimeout(() => svg.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, fill: 'forwards' }).onfinish = () => svg.remove(), 620);
+}
+
+function wiggle() {
+  const b = $('#box'), m = $('#boxMsg');
+  b.classList.remove('wiggle'); void b.offsetWidth; b.classList.add('wiggle');
+  m.classList.add('show'); clearTimeout(m._t); m._t = setTimeout(() => m.classList.remove('show'), 1800);
+}
+
+let toastT;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ---------- sound ---------- */
+function initAudio() {
+  if (ac) return;
+  try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ac = null; }
+}
+function ding(soft) {
+  if (muted || !ac) return;
+  try {
+    const t = ac.currentTime;
+    (soft ? [[988, 0]] : [[1318, 0], [1760, .09]]).forEach(([f, d]) => {
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = 'triangle'; o.frequency.value = f;
+      g.gain.setValueAtTime(.0001, t + d);
+      g.gain.exponentialRampToValueAtTime(soft ? .1 : .16, t + d + .01);
+      g.gain.exponentialRampToValueAtTime(.0001, t + d + .35);
+      o.connect(g); g.connect(ac.destination); o.start(t + d); o.stop(t + d + .4);
+    });
+  } catch (e) {}
+}
+$('#mute').addEventListener('click', () => {
+  muted = !muted; initAudio();
+  $('#mute').setAttribute('aria-pressed', String(muted));
+  $('#mute').setAttribute('aria-label', muted ? 'Turn sound on' : 'Turn sound off');
+  $('#muteText').textContent = muted ? 'Sound off' : 'Sound on';
+  $('#wave').style.display = muted ? 'none' : '';
+  if (!muted) ding(true);
+});
+
+/* ---------- checkout ---------- */
+function openReceipt() {
+  if (!box.length) return;
+  initAudio();
+  const lines = box.map(it => {
+    const p = byId(PRODUCTS, it.pid);
+    return `<div class="rline"><span>${esc(p.name)}</span><span>${money(p.price)}</span></div>` +
+      topsOf(it).map(t => `<div class="rline sub"><span>+ ${t.name}</span><span>${money(t.price)}</span></div>`).join('');
+  }).join('');
+  const d = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  $('#receipt').innerHTML = `
+    <h2 id="rtitle">Rosie Crumb</h2>
+    <div class="meta">Bakery &middot; ${d}</div>
+    <hr class="rule">${lines}<hr class="rule">
+    <div class="rline rtotal"><span>Total</span><span>${money(total())}</span></div>
+    <div class="rnote">Demo only. No payment is taken.</div>
+    <div class="ractions"><button type="button" id="keep">Keep shopping</button><button type="button" class="primary" id="place">Place order</button></div>`;
+  $('#modal').hidden = false;
+  $('#place').focus();
+  $('#keep').onclick = closeModal;
+  $('#place').onclick = placeOrder;
+  burst(90);
+  ding();
+}
+function placeOrder() {
+  const n = 1000 + Math.floor(Math.random() * 9000);
+  $('#receipt').innerHTML = `<div class="thanks"><big>Order placed!</big>
+    <div class="meta">Order #${n}</div>
+    <p style="margin:6px 0 16px">Your box is being packed. This is a demo, so nothing was charged.</p></div>
+    <div class="ractions"><button type="button" class="primary" id="done">Start a new box</button></div>`;
+  $('#done').focus();
+  $('#done').onclick = () => { box = []; renderBox(); updateAll(false); closeModal(); };
+  burst(160); ding();
+}
+function closeModal() { $('#modal').hidden = true; }
+$('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#modal').hidden) closeModal(); });
+$('#checkout').addEventListener('click', openReceipt);
+$('#checkout2').addEventListener('click', openReceipt);
+
+/* ---------- confetti ---------- */
+function burst(n) {
+  if (reduce) return;
+  const cv = $('#confetti'), ctx = cv.getContext('2d');
+  cv.width = innerWidth; cv.height = innerHeight;
+  const cols = ['#F8C8D4', '#E8A0B4', '#7A1F3D', '#C9A24B', '#FFF4E6', '#D9748F'];
+  const ps = Array.from({ length: n }, () => ({
+    x: innerWidth / 2 + rnd(-60, 60), y: innerHeight * .45,
+    vx: rnd(-7, 7), vy: rnd(-13, -3), w: rnd(6, 11), h: rnd(4, 7),
+    r: rnd(0, 6), vr: rnd(-.3, .3), c: cols[Math.floor(Math.random() * cols.length)]
+  }));
+  const t0 = performance.now();
+  (function frame(now) {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    ps.forEach(p => {
+      p.vy += .32; p.x += p.vx; p.y += p.vy; p.vx *= .99; p.r += p.vr;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore();
+    });
+    if (now - t0 < 2200) requestAnimationFrame(frame); else ctx.clearRect(0, 0, cv.width, cv.height);
+  })(t0);
+}
+
+/* ---------- start with a filled box (cinnamon roll, cookie, croissant = $13.50) ---------- */
+buildShelves();
+$('#startBtn').addEventListener('click', startGame);
+$('.logo').addEventListener('click', showStart);
+$('#homeBtn').addEventListener('click', showStart);
+$('.logo').style.cursor = 'pointer';
+document.body.classList.add('locked');
+$('#startBtn').focus({ preventScroll: true });
+PRODUCTS.forEach(loadMask);
+['cinnamon-roll', 'cookie', 'croissant'].forEach(pid => box.push({ uid: ++uid, pid, tops: [], rot: Math.round(rnd(-6, 6)) }));
+renderBox();
+updateAll(true);
+</script>
